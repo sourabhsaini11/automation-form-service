@@ -4,8 +4,8 @@ on:
   push:
 
 jobs:
-  deploy-draft:
-    if: startsWith(github.ref_name, 'release') == false
+  deploy:
+    if: startsWith(github.ref_name, 'release') == true
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.ref_name }}
@@ -25,11 +25,11 @@ jobs:
 
 
           ssh -i ./key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} -T <<EOF
-          REPO_DIR=~/ONDC-automation-framework/form_service_dev
+          REPO_DIR=~/ONDC-automation-framework/form_service_staging
           echo "Removing existing repository directory if exists"
           rm -rf \$REPO_DIR
-          echo "Cloning repository from main branch"
-          git clone --single-branch --branch main https://github.com/ONDC-Official/automation-form-service.git \$REPO_DIR
+          echo "Cloning repository from release-staging branch"
+          git clone --single-branch --branch release-staging https://github.com/ONDC-Official/automation-form-service.git \$REPO_DIR
           EOF
 
       - name: Install Docker Compose (if not installed)
@@ -50,7 +50,7 @@ jobs:
         run: |
           echo "Writing secrets to .env file"
           ssh -i ./key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
-          REPO_DIR=~/ONDC-automation-framework/form_service_dev
+          REPO_DIR=~/ONDC-automation-framework/form_service_staging
           echo "Writing environment variables to .env file"
           echo "PORT=${{ vars.PORT }}" >> \$REPO_DIR/.env
           echo "BASE_URL=${{ vars.BASE_URL }}" >> \$REPO_DIR/.env
@@ -71,7 +71,7 @@ jobs:
         run: |
           echo "Deploying with Docker Compose"
           ssh -i ./key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
-          REPO_DIR=~/ONDC-automation-framework/form_service_dev
+          REPO_DIR=~/ONDC-automation-framework/form_service_staging
           cd \$REPO_DIR
 
           # Ensure the .env and docker-compose.yml files exist

@@ -2,7 +2,7 @@ version: '3.8'
 services:
   form_service:
     build: .
-    container_name: form_service
+    container_name: form_service_staging
     ports:
       - "${PORT:-3300}:${PORT:-3300}"
     env_file:
