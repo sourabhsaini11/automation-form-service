@@ -19,10 +19,8 @@ export const getForm = async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Form not found' });
   }
 
-  // Get form service configuration for auto-injection
   const formServiceConfig = centralConfigService.getFormServiceConfig();
 
-  // For dynamic forms without 'direct' flag, return a URL that user can open in new tab
   if (formConfig.type === 'dynamic' && !direct) {
     const formRenderUrl = `${formServiceConfig.baseUrl}/forms/${actualFormUrl}?flow_id=${flow_id}&session_id=${session_id}&transaction_id=${transaction_id}&direct=true`;
 
